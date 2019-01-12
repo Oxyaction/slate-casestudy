@@ -9,7 +9,11 @@ PROJECT := slate-cs
 # tasks
 
 test:
-	pwd
+	echo $(CURDIR)
+
+init:
+	cd $(CURDIR)/order-service && npm i
+	cd $(CURDIR)/payment-service && npm i
 
 dev-start:
 	docker-compose -p $(PROJECT) --project-directory $(DEV_DIRECTORY) -f $(DEV_COMPOSE_FILE) up

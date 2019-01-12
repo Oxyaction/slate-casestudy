@@ -1,24 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { Order, Status } from '../interfaces/order.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Order, State } from '../entities/order.entity';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
 
 @Injectable()
 export class OrderService {
   private readonly orders: Order[] = [];
 
-  create() {
-    this.orders.push(new Order(this.orders.length, Status.Created, '2018'));
+  constructor(
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>
+  ) {}
+
+  async create() {
+    const order = new Order();
+    await this.orderRepository.save(order);
   }
 
-  get(id: number): Order {
-    return this.findOrder(id);
+  async updateState(id: number, state: State) {
+    const order: Order = await this.getOrder(id);
+    console.log(order);
+    
+    order.state = state;
+    await this.orderRepository.save(order);
   }
 
-  updateStatus(id: number, status: Status) {
-    const order = this.findOrder(id);
-    // order.status = 
+  async getOrder(id: number): Promise<Order> {
+    const order = await this.orderRepository.findOne(id);
+    if (!order) {
+      throw new EntityNotFoundException();
+    }
+    return order;
   }
 
-  protected findOrder(id: number) {
-    return this.orders.find(order => order.id === id);
-  }
+  // get(id: number): Order {
+  //   return this.findOrder(id);
+  // }
+
+  // updateStatus(id: number, status: Status) {
+  //   const order = this.findOrder(id);
+  //   // order.status = 
+  // }
+
+  // protected findOrder(id: number) {
+  //   return this.orders.find(order => order.id === id);
+  // }
 }
