@@ -1,12 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 import { PaymentService } from '../services/payment.service';
 
-@Controller('payments')
+@Controller()
 export class PaymentsController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Get()
-  findAll(): string {
-    return this.paymentService.getHello();
+  @MessagePattern({ cmd: 'sum' })
+  findAll() {
+    return { test: 'foo' };
   }
 }

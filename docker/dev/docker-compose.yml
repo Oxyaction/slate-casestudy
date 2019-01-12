@@ -7,7 +7,7 @@ services:
     volumes: 
       - ../../order-service:/app
     ports:
-      - 3000:3000
+      - 3000:${SERVICE_PORT}
     depends_on:
       - order-db
     command: bash -c 'cd /app && npm run start:dev'
@@ -18,7 +18,7 @@ services:
     volumes: 
       - ../../payment-service:/app
     ports:
-      - 3001:3000
+      - 3001:${SERVICE_PORT}
     depends_on:
       - payment-db
     command: bash -c 'cd /app && npm run start:dev'

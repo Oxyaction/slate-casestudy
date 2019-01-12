@@ -6,8 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice(PaymentModule, {
     transport: Transport.TCP,
     options: {
-      port: 3000
-    }
+      port: parseInt(process.env.SERVICE_HOST, 10)
+    },
   });
   app.listen(() => console.log('Microservice is listening'));
 }

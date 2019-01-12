@@ -2,20 +2,27 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, State } from '../entities/order.entity';
+import { PaymentService } from './payment.service';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
 
 @Injectable()
 export class OrderService {
-  private readonly orders: Order[] = [];
 
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>
+    private readonly orderRepository: Repository<Order>,
+    private readonly paymentService: PaymentService
   ) {}
 
   async create() {
     const order = new Order();
     await this.orderRepository.save(order);
+    try {
+      await this.paymentService.pay(order);
+    } catch (e) {
+      console.log(e);
+      
+    }
   }
 
   async updateState(id: number, state: State) {
