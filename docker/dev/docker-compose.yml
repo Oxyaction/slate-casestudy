@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  order:
+    image: node:11.6.0
+    env_file: .env
+    volumes: 
+      - ../../order-service:/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - order-db
+    command: bash -c 'cd /app && npm run start:dev'
+
+  payment:
+    image: node:11.6.0
+    env_file: .env
+    volumes: 
+      - ../../payment-service:/app
+    ports:
+      - 3001:3000
+    depends_on:
+      - payment-db
+    command: bash -c 'cd /app && npm run start:dev'
+
+  order-db:
+    image: postgres:11.1-alpine
+    env_file: .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_ORDER_DB}
+    volumes:
+      - order-db-vol:/var/lib/postgresql/data
+  
+  payment-db:
+    image: postgres:11.1-alpine
+    env_file: .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_PAYMENT_DB}
+    volumes:
+      - payment-db-vol:/var/lib/postgresql/data
+    
+
+volumes:
+  order-db-vol:
+  payment-db-vol:
