@@ -15,6 +15,6 @@ export class PaymentService {
 
   pay(order: Order) {
     const pattern = { cmd: 'pay' };
-    return this.client.send<any>(pattern, { orderId: order.id });
+    return this.client.send<true>(pattern, { orderId: order.id });
   }
 }
