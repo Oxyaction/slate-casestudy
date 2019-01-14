@@ -13,11 +13,18 @@ describe('AppController (e2e)', () => {
   let app: INestApplication;
   let server;
   let paymentService;
-  let paymentDto;
+  let paymentDto: PaymentDto;
 
   beforeEach(async () => {
-    // paymentService = new PaymentService();
-    paymentDto = new PaymentDto();
+    paymentDto = {
+      amount: 2000,
+      cardNumber: '1111-1111-1111-1111',
+      cvv: 111,
+      expiresMonth: 5,
+      expiresYear: 2025,
+      orderId: 23
+    };
+
     const module = await Test.createTestingModule({
       imports: [PaymentModule],
       providers: [{
@@ -44,16 +51,24 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  it('/ (POST)', () => {
+  it('should return validation error', async () => {
+    const invalidPaymentDto = new PaymentDto();
+    return request(server)
+      .post('/?command=pay')
+      .send(invalidPaymentDto)
+      .expect(200, '{"error":true,"message":"validation failed","errors":[{"attribute":"amount","errors":["amount should not be empty","amount must be an integer number"]},{"attribute":"orderId","errors":["orderId should not be empty","orderId must be an integer number"]},{"attribute":"cardNumber","errors":["cardNumber should not be empty","cardNumber must be a string"]},{"attribute":"expiresMonth","errors":["expiresMonth should not be empty","expiresMonth must be an integer number"]},{"attribute":"expiresYear","errors":["expiresYear should not be empty","expiresYear must be an integer number"]},{"attribute":"cvv","errors":["cvv should not be empty","cvv must be an integer number"]}]}');
+  });
+
+  it('should return `{"result": true} on success`', () => { 
     jest.spyOn(paymentService, 'pay').mockImplementation(() => true);
 
     return request(server)
       .post('/?command=pay')
       .send(paymentDto)
-      .expect(200, 'true');
+      .expect(200, { result: true });
   });
 
-  it('/ (POST) exception',() => {
+  it('should return error on payment failed',() => {
     let exception = new PaymentRejectedException();
 
     jest.spyOn(paymentService, 'pay').mockImplementation(() => { 
@@ -63,6 +78,6 @@ describe('AppController (e2e)', () => {
     return request(server)
       .post('/?command=pay')
       .send(paymentDto)
-      .expect(200, JSON.stringify({ error: true, message: exception.message }));
+      .expect(200, { error: true, message: exception.message });
   });
 });

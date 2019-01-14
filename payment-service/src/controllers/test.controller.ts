@@ -13,7 +13,8 @@ export class TestController {
 
   @Post()
   @HttpCode(200)
-  call(@Query('command') cmd, @Body() data: PaymentDto): Promise<boolean> {
-    return this.client.send<boolean>({ cmd }, data).toPromise();
+  async call(@Query('command') cmd, @Body() data: PaymentDto): Promise<any> {
+    
+    return await this.client.send<boolean>({ cmd }, data).toPromise();
   }
 }

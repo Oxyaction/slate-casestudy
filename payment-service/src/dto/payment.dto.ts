@@ -2,11 +2,11 @@
 import { IsString, IsInt, IsNotEmpty } from 'class-validator';
 
 export class PaymentDto {
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
   readonly amount: number;
 
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
   readonly orderId: number;
 
@@ -14,15 +14,15 @@ export class PaymentDto {
   @IsNotEmpty()
   readonly cardNumber: string;
 
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
   readonly expiresMonth: number;
 
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
   readonly expiresYear: number;
 
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
   readonly cvv: number;
 }
