@@ -17,8 +17,15 @@ export class PaymentService {
   })
   client: ClientProxy;
 
-  pay(order: Order): Promise<PaymentResult | ApiError>{
+  close() {
+    this.client.close();
+  }
 
+  async connect() {
+    await this.client.connect();
+  }
+
+  pay(order: Order): Promise<PaymentResult | ApiError>{
     return this.client.send({ cmd: 'pay' }, {
       orderId: order.id,
       amount: 2000,

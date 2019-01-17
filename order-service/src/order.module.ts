@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrdersController } from './controllers/orders.controller';
 import { OrderService } from './services/order.service';
@@ -24,4 +24,14 @@ const config = require('config');
   controllers: [OrdersController],
   providers: [OrderService, PaymentService, Config],
 })
-export class OrderModule {}
+export class OrderModule implements OnModuleInit, OnModuleDestroy {
+  constructor(private readonly paymentService: PaymentService) {}
+
+  onModuleDestroy() {
+    this.paymentService.close();
+  }
+
+  async onModuleInit() {
+    await this.paymentService.connect();
+  }
+}

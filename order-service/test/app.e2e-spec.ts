@@ -19,8 +19,6 @@ describe('AppController (e2e)', () => {
   });
 
   afterAll(async () => {
-    console.log(connection);
-    
     await connection.close();
     await app.close();
   });
