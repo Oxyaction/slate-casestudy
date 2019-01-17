@@ -69,5 +69,4 @@ services:
     command: ['probe.yml']
 
 volumes:
-  order-vol:
   payment-vol:

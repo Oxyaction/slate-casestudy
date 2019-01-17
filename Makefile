@@ -27,8 +27,8 @@ clean:
 	docker-compose -p $(DEV_PROJECT) --project-directory $(DEV_DIRECTORY) -f $(DEV_COMPOSE_FILE) rm -f -v
 	docker-compose -p $(TEST_PROJECT) --project-directory $(TEST_DIRECTORY) -f $(TEST_COMPOSE_FILE) kill
 	docker-compose -p $(TEST_PROJECT) --project-directory $(TEST_DIRECTORY) -f $(TEST_COMPOSE_FILE) rm -f -v
-	docker-compose -p $(PROD_PROJECT) --project-directory $(PROD_DIRECTORY) -f $(TEST_COMPOSE_FILE) kill
-	docker-compose -p $(PROD_PROJECT) --project-directory $(PROD_DIRECTORY) -f $(TEST_COMPOSE_FILE) rm -f -v
+	docker-compose -p $(PROD_PROJECT) --project-directory $(PROD_DIRECTORY) -f $(PROD_COMPOSE_FILE) kill
+	docker-compose -p $(PROD_PROJECT) --project-directory $(PROD_DIRECTORY) -f $(PROD_COMPOSE_FILE) rm -f -v
 	docker rmi $(docker images -q -f dangling=true) 2>/dev/null || true
 
 test:
