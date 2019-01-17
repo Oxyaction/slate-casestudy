@@ -60,11 +60,12 @@ describe('OrdersController', () => {
 
   describe('/orders/create', () => {
     it('should call `orderService.create()', async () => {
-      const createSpy = jest.spyOn(orderService, 'create').mockImplementation(() => null);
+      const createSpy = jest.spyOn(orderService, 'create').mockReturnValue(order);
 
-      await ordersController.create();
+      const _order = await ordersController.create();
 
       expect(createSpy).toBeCalled();
+      expect(_order).toBe(order);
     });
   });
 

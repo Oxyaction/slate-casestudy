@@ -18,7 +18,7 @@ export class OrderService {
     private readonly paymentService: PaymentService
   ) {}
 
-  async create() {
+  async create(): Promise<Order> {
     const order = new Order();
     await this.orderRepository.save(order);
     const response = await this.paymentService.pay(order);
@@ -35,13 +35,15 @@ export class OrderService {
       order.state = 'confirmed';
       await this.orderRepository.save(order);
     }
+    return order;
   }
 
-  async updateState(id: number, state: State) {
+  async updateState(id: number, state: State): Promise<Order> {
     const order: Order = await this.getOrder(id);
     
     order.state = state;
     await this.orderRepository.save(order);
+    return order;
   }
 
   async getOrder(id: number): Promise<Order> {

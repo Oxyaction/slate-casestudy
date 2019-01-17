@@ -17,12 +17,12 @@ export class OrdersController {
   }
 
   @Post()
-  async create(): Promise<void> {
-    await this.orderService.create();
+  async create(): Promise<Order> {
+    return await this.orderService.create();
   }
 
   @Put('cancel/:id')
-  async cancel(@Param('id') id): Promise<void> {
-    await this.orderService.updateState(id, 'cancelled');
+  async cancel(@Param('id') id): Promise<Order> {
+    return await this.orderService.updateState(id, 'cancelled');
   }
 }
