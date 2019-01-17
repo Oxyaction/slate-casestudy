@@ -1,0 +1,10 @@
+FROM node:11.6.0
+LABEL maintainer="alexkomp.ua@gmail.com"
+
+CMD ["node", "main.js"]
+
+COPY order-service/dist /application
+COPY tmp/order-service/node_modules /application/node_modules
+COPY order-service/config /application/config
+
+WORKDIR /application

@@ -1,0 +1,19 @@
+---
+- name: Probe
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: set facts
+      set_fact:
+        probe_host: "{{ lookup('env', 'PROBE_HOST') }}"
+        probe_port: "{{ lookup('env', 'PROBE_PORT') }}"
+        probe_delay: "{{ lookup('env', 'PROBE_DELAY') | default(0, true) }}"
+        probe_timeout: "{{ lookup('env', 'PROBE_TIMEOUT') | default(180, true) }}"
+    - name: message
+      debug:
+        msg: >
+          Probing {{ probe_host }}:{{ probe_port }} with delay {{ probe_delay }}, timeout {{ probe_timeout }}
+    - name: waiting for host
+      local_action: wait_for host={{ probe_host }} port={{ probe_port }} delay={{ probe_delay }} timeout={{ probe_timeout }}
+

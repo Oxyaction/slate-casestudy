@@ -29,12 +29,7 @@ describe('AppController (e2e)', () => {
 
   afterAll(() => {
     setTimeout(async () => {
-      try {
-        // await connection.close();
-        await app.close();
-      } catch (e) {
-        // console.error(e);
-      }
+      await app.close();
     }, 2000);
   });
 
@@ -59,6 +54,8 @@ describe('AppController (e2e)', () => {
           
           const _order = await orderService.getOrder(res.body.id);
           expect(_order).toEqual(res.body);
+
+          await orderRepository.remove(_order);
         });
     });
   });

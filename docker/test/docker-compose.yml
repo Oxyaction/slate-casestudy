@@ -1,0 +1,73 @@
+version: '3.7'
+
+services:
+  order-test:
+    build: 
+      context: ../../
+      dockerfile: docker/test/Dockerfile.order
+    env_file: .env
+    depends_on:
+      - order-db
+      - payment
+    volumes:
+      - ../../tmp/order-service/node_modules:/application/node_modules
+
+  order-builder:
+    build: 
+      context: ../../
+      dockerfile: docker/test/Dockerfile.order
+    volumes:
+      - ../../tmp/order-service/node_modules:/application/node_modules
+      - ../../order-service/dist:/application/dist
+    entrypoint: ['npm', 'run', 'build']
+
+  payment:
+    build:
+      context: ../../
+      dockerfile: docker/test/Dockerfile.payment
+    env_file: .env
+    volumes:
+      - payment-vol:/application/node_modules
+    command: ['npm', 'run', 'start']
+
+  payment-test:
+    build:
+      context: ../../
+      dockerfile: docker/test/Dockerfile.payment
+    env_file: .env
+    volumes:
+      - ../../tmp/payment-service/node_modules:/application/node_modules
+
+  payment-builder:
+    build: 
+      context: ../../
+      dockerfile: docker/test/Dockerfile.payment
+    volumes:
+      - ../../tmp/payment-service/node_modules:/application/node_modules
+      - ../../payment-service/dist:/application/dist
+    entrypoint: ['npm', 'run', 'build']
+
+  order-db:
+    image: postgres:11.1-alpine
+    env_file: .env
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${POSTGRES_ORDER_DB}
+
+  probe:
+    image: williamyeh/ansible:debian8
+    depends_on:
+      - order-db
+    environment:
+      - PROBE_HOST=${ORDER_DB_HOST}
+      - PROBE_PORT=5432
+    volumes:
+     - ./probe.yml:/ansible/probe.yml
+    working_dir: /ansible 
+    entrypoint: ['ansible-playbook']
+    command: ['probe.yml']
+
+volumes:
+  order-vol:
+  payment-vol:

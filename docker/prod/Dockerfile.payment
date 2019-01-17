@@ -1,0 +1,10 @@
+FROM node:11.6.0
+LABEL maintainer="alexkomp.ua@gmail.com"
+
+CMD ["node", "main.js"]
+
+COPY payment-service/dist /application
+COPY tmp/payment-service/node_modules /application/node_modules
+COPY payment-service/config /application/config
+
+WORKDIR /application

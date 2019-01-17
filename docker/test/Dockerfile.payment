@@ -1,0 +1,12 @@
+FROM node:11.6.0
+LABEL maintainer="alexkomp.ua@gmail.com"
+
+COPY docker/test/scripts/entrypoint.order.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["npm", "run", "test:all"]
+
+COPY payment-service /application
+RUN rm -rf /application/node_modules
+WORKDIR /application
