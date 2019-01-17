@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PaymentRejectedException } from '../exceptions/payment-rejected.exceptions';
+import { PaymentRejectedException } from '../exceptions/payment-rejected.exception';
 import { PaymentDto } from '../dto/payment.dto';
 
 @Injectable()

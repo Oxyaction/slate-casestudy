@@ -25,6 +25,7 @@
     "@nestjs/microservices": "^5.5.0",
     "class-transformer": "^0.2.0",
     "class-validator": "^0.9.1",
+    "config": "^3.0.1",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.2.2",
@@ -59,5 +60,8 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "optionalDependencies": {
+    "why-is-node-running": "^2.0.3"
   }
 }

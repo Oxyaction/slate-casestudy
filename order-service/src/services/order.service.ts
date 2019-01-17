@@ -4,6 +4,10 @@ import { Repository } from 'typeorm';
 import { Order, State } from '../entities/order.entity';
 import { PaymentService } from './payment.service';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { ApiError } from '../interfaces/api-error.interface';
+import { ApiValidationError } from '../interfaces/api-validation-error.interface';
+import { PaymentResult } from '../interfaces/payment-result.interface';
+import { ValidationFailedException } from '../exceptions/validation-failed.exception';
 
 @Injectable()
 export class OrderService {
@@ -17,17 +21,24 @@ export class OrderService {
   async create() {
     const order = new Order();
     await this.orderRepository.save(order);
-    try {
-      await this.paymentService.pay(order);
-    } catch (e) {
-      console.log(e);
-      
+    const response = await this.paymentService.pay(order);
+    
+    if ((<ApiError>response).error) {
+      if ((<ApiError>response).message === 'payment rejected') {
+        order.state = 'cancelled';
+        await this.orderRepository.save(order);
+      } else if ((<ApiError>response).message === 'validation failed') {
+        await this.orderRepository.remove(order);
+        throw new ValidationFailedException((<ApiValidationError>response).errors);
+      }
+    } else if ((<PaymentResult>response).result){
+      order.state = 'confirmed';
+      await this.orderRepository.save(order);
     }
   }
 
   async updateState(id: number, state: State) {
     const order: Order = await this.getOrder(id);
-    console.log(order);
     
     order.state = state;
     await this.orderRepository.save(order);
@@ -40,17 +51,4 @@ export class OrderService {
     }
     return order;
   }
-
-  // get(id: number): Order {
-  //   return this.findOrder(id);
-  // }
-
-  // updateStatus(id: number, status: Status) {
-  //   const order = this.findOrder(id);
-  //   // order.status = 
-  // }
-
-  // protected findOrder(id: number) {
-  //   return this.orders.find(order => order.id === id);
-  // }
 }

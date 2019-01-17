@@ -17,10 +17,8 @@ services:
     env_file: .env
     volumes: 
       - ../../payment-service:/app
-    ports:
-      - 3001:${SERVICE_PORT}
-    depends_on:
-      - payment-db
+    # ports:
+    #   - 3001:${SERVICE_PORT}
     command: bash -c 'cd /app && npm run start:dev'
 
   order-db:
@@ -32,18 +30,6 @@ services:
       - POSTGRES_DB=${POSTGRES_ORDER_DB}
     volumes:
       - order-db-vol:/var/lib/postgresql/data
-  
-  payment-db:
-    image: postgres:11.1-alpine
-    env_file: .env
-    ports:
-      - 5433:5432
-    environment:
-      - POSTGRES_DB=${POSTGRES_PAYMENT_DB}
-    volumes:
-      - payment-db-vol:/var/lib/postgresql/data
-    
 
 volumes:
   order-db-vol:
-  payment-db-vol:

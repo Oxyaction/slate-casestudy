@@ -1,19 +1,23 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, INestMicroservice } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { Transport } from '@nestjs/microservices';
 import * as express from 'express';
-import { PaymentRejectedException } from '../src/exceptions/payment-rejected.exceptions';
+import { PaymentRejectedException } from '../src/exceptions/payment-rejected.exception';
 import { PaymentModule } from '../src/payment.module';
-import { TestController } from '../src/controllers/test.controller';
+import { TestController } from './test.controller';
 import { PaymentService } from '../src/services/payment.service';
 import { PaymentDto } from '../src/dto/payment.dto';
+import { TestingModule } from './testing.module';
+
+const log = require('why-is-node-running');
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let server;
   let paymentService;
   let paymentDto: PaymentDto;
+  let microservice: INestMicroservice;
 
   beforeEach(async () => {
     paymentDto = {
@@ -26,12 +30,7 @@ describe('AppController (e2e)', () => {
     };
 
     const module = await Test.createTestingModule({
-      imports: [PaymentModule],
-      providers: [{
-        provide: 'PaymentService',
-        useValue: paymentService
-      }],
-      controllers: [TestController]
+      imports: [PaymentModule, TestingModule],
     }).compile();
 
     paymentService = module.get<PaymentService>(PaymentService);
@@ -39,7 +38,7 @@ describe('AppController (e2e)', () => {
     server = express();
     app = module.createNestApplication(server);
     
-    app.connectMicroservice({
+    microservice = app.connectMicroservice({
       transport: Transport.TCP,
     });
 
@@ -48,6 +47,7 @@ describe('AppController (e2e)', () => {
   });
 
   afterEach(async () => {
+    await microservice.close();
     await app.close();
   });
 
@@ -81,3 +81,8 @@ describe('AppController (e2e)', () => {
       .expect(200, { error: true, message: exception.message });
   });
 });
+
+
+// setTimeout(() => {
+//   log();
+// }, 5000)

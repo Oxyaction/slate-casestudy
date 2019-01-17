@@ -1,35 +1,28 @@
-import { Controller, Get, Post, Param, Put, UseFilters } from '@nestjs/common';
-import { OrderService } from '../services/order.service';
-import { PaymentService } from '../services/payment.service';
-import { Order } from '../interfaces/order.interface';
+import { Controller, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { EntityNotFoundFilter } from '../filters/entity-not-found.filter';
+import { ValidationFailedFilter } from '../filters/validation-failed.filter';
+import { OrderService } from '../services/order.service';
+import { Order } from 'src/entities/order.entity';
 
 @Controller('orders')
-@UseFilters(EntityNotFoundFilter)
+@UseFilters(EntityNotFoundFilter, ValidationFailedFilter)
 export class OrdersController {
   constructor(
-    private readonly orderService: OrderService,
-    private readonly paymentService: PaymentService
+    private readonly orderService: OrderService
   ) {}
 
-  @Get(':id')
-  async findOne(@Param('id') id) {
-    const a = await this.orderService.getOrder(id);
-    console.log(a);
-    return a;
-    
-    // return this.orderService.get(id);
+  @Get('check/:id')
+  async checkStatus(@Param('id') id): Promise<Order> {
+    return await this.orderService.getOrder(id);
   }
 
   @Post()
-  create() {
-    
+  async create(): Promise<void> {
+    await this.orderService.create();
   }
 
-  @Put(':id')
-  update(@Param('id') id) {
-
+  @Put('cancel/:id')
+  async cancel(@Param('id') id): Promise<void> {
+    await this.orderService.updateState(id, 'cancelled');
   }
-
-  
 }

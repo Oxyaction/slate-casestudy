@@ -1,6 +1,6 @@
 
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
-import { PaymentRejectedException } from '../exceptions/payment-rejected.exceptions';
+import { PaymentRejectedException } from '../exceptions/payment-rejected.exception';
 
 @Catch(PaymentRejectedException)
 export class PaymentRejectedFilter implements ExceptionFilter {

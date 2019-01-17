@@ -3,23 +3,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrdersController } from './controllers/orders.controller';
 import { OrderService } from './services/order.service';
 import { PaymentService } from './services/payment.service';
+import { Config } from './providers/config';
 import { Order } from './entities/order.entity';
+const config = require('config');
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.ORDER_DB_HOST,
+      host: config.get('db.host'),
       port: 5432,
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_ORDER_DB,
+      username: config.get('db.username'),
+      password: config.get('db.password'),
+      database: config.get('db.database'),
       entities: [__dirname + '/entities/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     TypeOrmModule.forFeature([Order])
   ],
   controllers: [OrdersController],
-  providers: [OrderService, PaymentService],
+  providers: [OrderService, PaymentService, Config],
 })
 export class OrderModule {}

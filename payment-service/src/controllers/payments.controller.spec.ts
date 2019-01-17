@@ -23,11 +23,11 @@ describe('PaymentsController', () => {
   });
 
   describe('pay', () => {
-    it('should call paymentService `pay()` with `paymentDto`', () => {
+    it('should call paymentService `pay()` with `paymentDto`', async () => {
       const mockFn = jest.fn(() => true);
       jest.spyOn(paymentService, 'pay').mockImplementation(mockFn);
 
-      paymentsController.pay(paymentDto);
+      await paymentsController.pay(paymentDto);
       
       expect(mockFn).toBeCalled();
       expect(mockFn).toBeCalledWith(paymentDto);
