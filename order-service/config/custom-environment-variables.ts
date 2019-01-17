@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   port: 'SERVICE_PORT',
   db: {
     host: 'ORDER_DB_HOST',
