@@ -66,8 +66,8 @@ tag:
 	docker tag $(PAYMENT_IMAGE_ID) $(DOCKER_REGISTRY)/$(ORG_NAME)/payment:latest
 
 push:
-	docker push order:latest
-	docker push payment:latest
+	docker push $(ORG_NAME)/order:latest
+	docker push $(ORG_NAME)/payment:latest
 
 ORDER_CONTAINER_ID := $$(docker-compose -p $(PROD_PROJECT) --project-directory $(PROD_DIRECTORY) -f $(PROD_COMPOSE_FILE) ps -q order)
 ORDER_IMAGE_ID := $$(docker inspect -f '{{ .Image }}' $(ORDER_CONTAINER_ID))

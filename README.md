@@ -30,3 +30,4 @@ Commands:
 
 - move config to injectable service
 - separate order service and payment service to own repos
+- autobuild docker images on push to github repo
