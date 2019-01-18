@@ -34,6 +34,10 @@ export class OrderService {
     } else if ((<PaymentResult>response).result){
       order.state = 'confirmed';
       await this.orderRepository.save(order);
+      setTimeout(() => {
+        order.state = 'delivered';
+        this.orderRepository.save(order);
+      }, 15000);
     }
     return order;
   }

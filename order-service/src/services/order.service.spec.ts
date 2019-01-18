@@ -1,3 +1,5 @@
+jest.useFakeTimers();
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { OrderService } from './order.service';
@@ -40,6 +42,7 @@ describe('OrderService', () => {
   });
 
   describe('create', () => {
+
     it('should call `OrderRepository.create()` with new Order', async () => {
        const saveMock = jest.spyOn(mockRepository, 'save');
       
@@ -59,7 +62,7 @@ describe('OrderService', () => {
     });
 
     it('should change order state to `confirmed` if paymentService approved payment', async () => {
-      const saveMock = jest.fn();
+      const saveMock = jest.fn()
       jest.spyOn(mockRepository, 'save').mockImplementation(saveMock);
       jest.spyOn(mockPaymentService, 'pay').mockImplementation(() => ({ result: true }));      
 
@@ -67,6 +70,19 @@ describe('OrderService', () => {
 
       expect(saveMock).toBeCalled();
       expect(saveMock.mock.calls[1][0].state).toBe('confirmed');
+    });
+
+    it('should change status to `delivered` in some time after payment was confirmed', async () => {
+      const saveMock = jest.fn()
+      jest.spyOn(mockRepository, 'save').mockImplementation(saveMock);
+      jest.spyOn(mockPaymentService, 'pay').mockImplementation(() => ({ result: true }));
+      
+      await orderService.create();
+
+      jest.runAllTimers();
+
+      expect(saveMock).toBeCalled();
+      expect(saveMock.mock.calls[2][0].state).toBe('delivered');
     });
 
     it('should change order state `cancelled` if paymentService rejected payment', async () => {
